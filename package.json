@@ -1,0 +1,13 @@
+{
+  "name": "yt-chat",
+  "version": "1.0.0",
+  "description": "Get Answers from a Youtube video with references",
+  "private": true,
+  "scripts": {
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && uv run fastapi dev main.py",
+    "install:all": "npm install && cd client && npm install && cd ../server && uv sync",
+    "lint": "cd client && npm run lint && cd ../server && uv run ruff check .",
+    "format": "cd client && npm run format && cd ../server && uv run ruff format ."
+  }
+}

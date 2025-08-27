@@ -1,21 +1,17 @@
-import { Link } from '@tanstack/react-router'
-
 export default function Header() {
   return (
-    <header className="p-2 flex gap-2 bg-white text-black justify-between">
-      <nav className="flex flex-row">
-        <div className="px-2 font-bold">
-          <Link to="/">Home</Link>
-        </div>
-
-        <div className="px-2 font-bold">
-          <Link to="/demo/tanstack-query">TanStack Query</Link>
-        </div>
-
-        <div className="px-2 font-bold">
-          <a href="https://github.com/ashu-lv/yt-chat" target="_blank" rel="noopener noreferrer">Github</a>
-        </div>
-      </nav>
+    <header className="p-4 bg-red-600 text-white">
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-bold">YouTube Chat</h1>
+        <a 
+          href="https://github.com/ashu-lv/yt-chat" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-white hover:text-red-200 transition-colors"
+        >
+          GitHub
+        </a>
+      </div>
     </header>
   )
 }
