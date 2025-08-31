@@ -1,2 +1,20 @@
+# OS and IDE files
 .DS_Store
+
+# Root level ignores
 .ruff_cache
+
+# Client ignores
+client/node_modules
+client/dist
+client/dist-ssr
+client/*.local
+client/count.txt
+client/.env
+client/.nitro
+client/.tanstack
+
+# Server ignores
+server/__pycache__
+server/.venv
+server/.env
