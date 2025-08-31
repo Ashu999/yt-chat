@@ -1,42 +1,63 @@
-import { useQuery } from '@tanstack/react-query'
-import { serverApi } from './lib/api'
-import { LoadingSpinner } from './components/LoadingSpinner'
-import { ErrorDisplay } from './components/ErrorDisplay'
-import { ServerStatus } from './components/ServerStatus'
+import { useQuery } from "@tanstack/react-query";
+import { serverApi } from "./lib/api";
+import { ErrorDisplay } from "./components/ErrorDisplay";
+import { VideoManager } from "./components/VideoManager";
+import { MainLayout } from "./components/MainLayout";
+import Header from "./components/Header";
+import { useVideoTranscript } from "./hooks/useVideoTranscript";
+import { useChat } from "./hooks/useChat";
 
 function App() {
-  const { data: healthData, isLoading: healthLoading, error: healthError } = useQuery({
-    queryKey: ['health'],
-    queryFn: serverApi.getHealth,
-    retry: 3,
-    retryDelay: 1000,
-  })
+	const { currentVideo, handleStartOver, transcriptMutation, handleVideoSubmit } = useVideoTranscript();
+	const { clearMessages } = useChat();
 
-  const { data: itemData, isLoading: itemLoading, error: itemError } = useQuery({
-    queryKey: ['item', 1],
-    queryFn: () => serverApi.getItem(1, 'test'),
-    retry: 3,
-    retryDelay: 1000,
-  })
+	// Health check
+	const { error: healthError } = useQuery({
+		queryKey: ["health"],
+		queryFn: serverApi.getHealth,
+		retry: 3,
+		retryDelay: 1000,
+	});
 
-  const hasErrors = healthError || itemError
-  const isLoading = healthLoading || itemLoading
+	const handleTimestampClick = (timestamp: number) => {
+		console.log("Navigate to timestamp:", timestamp);
+	};
 
-  if (isLoading) {
-    return <LoadingSpinner message="Connecting to server..." />
-  }
+	const onStartOver = () => {
+		handleStartOver();
+		clearMessages();
+	};
 
-  if (hasErrors) {
-    return <ErrorDisplay healthError={healthError} itemError={itemError} />
-  }
+	if (healthError) {
+		return <ErrorDisplay healthError={healthError} itemError={null} />;
+	}
 
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <ServerStatus healthData={healthData} itemData={itemData} />
-      </div>
-    </div>
-  )
+	return (
+		<div className="min-h-screen bg-background">
+			<Header />
+			<div className="container mx-auto px-4 py-8">
+				{!currentVideo ? (
+					<VideoManager 
+						onSubmit={handleVideoSubmit}
+						isLoading={transcriptMutation.isPending}
+						error={
+							transcriptMutation.isError ||
+							(transcriptMutation.data && !transcriptMutation.data.success)
+								? transcriptMutation.data?.error ||
+								"Failed to load transcript"
+								: undefined
+						}
+					/>
+				) : (
+					<MainLayout
+						currentVideo={currentVideo}
+						onTimestampClick={handleTimestampClick}
+						onStartOver={onStartOver}
+					/>
+				)}
+			</div>
+		</div>
+	);
 }
 
-export default App
+export default App;
