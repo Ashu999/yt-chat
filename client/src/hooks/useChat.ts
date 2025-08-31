@@ -9,14 +9,19 @@ export function useChat() {
 	const parseResponse = (response: string, fallbackTimestamps?: number[]) => {
 		try {
 			const parsed = JSON.parse(response);
+			console.log('Parsed response:', parsed);
+			
 			if (parsed && typeof parsed === 'object' && parsed.answer) {
 				return {
 					content: parsed.answer,
 					timestamps: parsed.timestamps || fallbackTimestamps || [],
 				};
 			}
+			
+			// If the JSON is valid but doesn't have the expected structure
+			console.warn('JSON parsed but no answer field found:', parsed);
 		} catch (e) {
-			// If parsing fails, treat as plain text
+			console.error('Failed to parse JSON response:', e, 'Response:', response);
 		}
 		
 		// Fallback to original response as plain text

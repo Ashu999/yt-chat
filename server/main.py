@@ -217,15 +217,34 @@ Please provide your answer in JSON format."""
         )
 
         response_text = completion.choices[0].message.content
+        logger.info(f"AI response: {response_text}")
+
+        # Clean markdown code blocks if present
+        cleaned_response = response_text.strip()
+        if cleaned_response.startswith("```json"):
+            # Remove ```json from start and ``` from end
+            cleaned_response = cleaned_response[7:]  # Remove "```json"
+            if cleaned_response.endswith("```"):
+                cleaned_response = cleaned_response[:-3]  # Remove ending "```"
+            cleaned_response = cleaned_response.strip()
+            logger.info(f"Cleaned response (removed markdown): {cleaned_response}")
+        elif cleaned_response.startswith("```"):
+            # Handle generic code blocks
+            lines = cleaned_response.split('\n')
+            if len(lines) > 2 and lines[-1].strip() == "```":
+                cleaned_response = '\n'.join(lines[1:-1]).strip()
+                logger.info(f"Cleaned response (removed generic markdown): {cleaned_response}")
 
         # Try to parse JSON response
         try:
-            parsed_response = json.loads(response_text)
-            answer = parsed_response.get("answer", response_text)
+            parsed_response = json.loads(cleaned_response)
+            logger.info(f"Successfully parsed JSON: {parsed_response}")
+            answer = parsed_response.get("answer", cleaned_response)
             timestamps = parsed_response.get("timestamps", [])
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as e:
             # Fallback if JSON parsing fails
-            answer = response_text
+            logger.warning(f"Failed to parse cleaned response as JSON: {e}. Cleaned response: {cleaned_response}")
+            answer = cleaned_response
             timestamps = []
 
         return ChatResponse(
