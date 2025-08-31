@@ -1,14 +1,16 @@
 interface LoadingSpinnerProps {
-  message?: string
+	message?: string;
 }
 
-export function LoadingSpinner({ message = "Loading..." }: LoadingSpinnerProps) {
-  return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto"></div>
-        <div className="text-gray-600 mt-4">{message}</div>
-      </div>
-    </div>
-  )
+export function LoadingSpinner({
+	message = "Loading...",
+}: LoadingSpinnerProps) {
+	return (
+		<div className="flex items-center justify-center min-h-screen">
+			<div className="text-center">
+				<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto" />
+				<div className="text-gray-600 mt-4">{message}</div>
+			</div>
+		</div>
+	);
 }

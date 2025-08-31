@@ -33,5 +33,6 @@
   "[python]": {
       "editor.formatOnSave": true,
       "editor.defaultFormatter": "charliermarsh.ruff"
-    }
+    },
+    "editor.tabSize": 2
 }
