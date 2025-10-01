@@ -2,6 +2,8 @@
 
 Get Answers from a Youtube video with references.
 
+![yt-chat demo](.readme/yt-chat-demo.gif)
+
 ## Prerequisites
 
 - **Node.js** (v18 or higher)
