@@ -114,8 +114,6 @@ def get_transcript(request: YouTubeURLRequest) -> TranscriptResponse:
             for entry in transcript_list.snippets
         ]
 
-        # logger.info(f"Transcript: {transcript}")
-
         # Store in memory (in real app, you'd use session management)
         transcript_storage[video_id] = transcript
 
@@ -178,9 +176,6 @@ def chat_with_video(request: ChatRequest) -> ChatResponse:
             ],
         )
 
-        # Log context size for monitoring
-        logger.info(f"Sending complete transcript with {len(transcript)} entries to AI")
-
         # Prepare prompt for Groq
         system_prompt = (
             "You are a helpful AI assistant that answers questions "
@@ -217,7 +212,6 @@ Please provide your answer in JSON format."""
         )
 
         response_text = completion.choices[0].message.content
-        logger.info(f"AI response: {response_text}")
 
         # Clean markdown code blocks if present
         cleaned_response = response_text.strip()
@@ -227,18 +221,15 @@ Please provide your answer in JSON format."""
             if cleaned_response.endswith("```"):
                 cleaned_response = cleaned_response[:-3]  # Remove ending "```"
             cleaned_response = cleaned_response.strip()
-            logger.info(f"Cleaned response (removed markdown): {cleaned_response}")
         elif cleaned_response.startswith("```"):
             # Handle generic code blocks
             lines = cleaned_response.split('\n')
             if len(lines) > 2 and lines[-1].strip() == "```":
                 cleaned_response = '\n'.join(lines[1:-1]).strip()
-                logger.info(f"Cleaned response (removed generic markdown): {cleaned_response}")
 
         # Try to parse JSON response
         try:
             parsed_response = json.loads(cleaned_response)
-            logger.info(f"Successfully parsed JSON: {parsed_response}")
             answer = parsed_response.get("answer", cleaned_response)
             timestamps = parsed_response.get("timestamps", [])
         except json.JSONDecodeError as e:
